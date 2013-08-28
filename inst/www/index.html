@@ -16,13 +16,13 @@ $(function(){
   editor.setFontSize("14px");
   
   function domarkdown(e){
-    opencpu.r_fun_call("rmdtextencoded", {
+    var req = opencpu.r_fun_call("rmdtextencoded", {
       //we use additional URI encoding to escape newlines until the misterious json bug is fixed
       text : encodeURIComponent(editor.getSession().getValue())
     }, function(location){
       $("iframe").attr('src', location + "files/output.html");     
     }).fail(function(text){
-      alert("Error: " + text);
+      alert("Error: " + req.responseText);
     });
   }
 
@@ -62,7 +62,7 @@ iframe {
 </head>
 <body>
 
-<div id="editor"> The Normal Distribution
+<div id="editor">The Normal Distribution
 =======================
 
 The normal distribution is defined as follows:
@@ -80,9 +80,17 @@ output <- rnorm(1000, 100, 15);
 The normal distribution has the typical bell shape:
 
 ```{r block2, fig.width=8, fig.height=5}
-ggplot2::qplot(output)
+library(ggplot2)
+qplot(output)
 ```
- 
+
+## Kernel density estimation
+
+We can perform density estimation on the sample:
+
+```{r block3, fig.width=8, fig.height=5}
+plot(density(output))
+``` 
 </div>
 
 <iframe 'about:blank'></iframe>
