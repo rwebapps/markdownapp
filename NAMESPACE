@@ -1,0 +1,2 @@
+export(rmdtextencoded)
+importFrom(utils, URLdecode)

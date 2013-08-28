@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>OpenCPU Markdown App</title>
+    
+<script src="underscore-min.js"></script>    
+<script src="jquery-1.10.1.min.js"></script>
+<script src="opencpu.js"></script>
+<script src="src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+$(function(){
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/monokai");
+  editor.getSession().setMode("ace/mode/r");
+  editor.setFontSize("14px");
+  
+  function domarkdown(e){
+    opencpu.r_fun_call("rmdtextencoded", {
+      //we use additional URI encoding to escape newlines until the misterious json bug is fixed
+      text : encodeURIComponent(editor.getSession().getValue())
+    }, function(location){
+      $("iframe").attr('src', location + "files/output.html");     
+    }).fail(function(text){
+      alert("Error: " + text);
+    });
+  }
+
+  //auto run after 3 seconds of no activity
+  var update = _.debounce(domarkdown, 3000);
+  
+  //register event
+  editor.on("change", update);
+  
+  //init on start
+  update();  
+});
+</script>
+
+<style type="text/css" media="screen">
+ 
+#editor { 
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+iframe { 
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 600px;
+  height: 100%;
+  border: 0;
+  margin: 0;
+  z-index: 999999;
+}
+
+</style>
+</head>
+<body>
+
+<div id="editor"> The Normal Distribution
+=======================
+
+The normal distribution is defined as follows:
+
+$$latex
+f(x;\mu,\sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} e^{ -\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2 }
+$$
+
+To generate random draws from a normal distribution we use the **rnorm** function:
+
+```{r block1}
+output <- rnorm(1000, 100, 15);
+```
+
+The normal distribution has the typical bell shape:
+
+```{r block2, fig.width=8, fig.height=5}
+ggplot2::qplot(output)
+```
+ 
+</div>
+
+<iframe 'about:blank'></iframe>
+
+</body>
+</html>
