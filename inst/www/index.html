@@ -14,6 +14,8 @@ $(function(){
   editor.setTheme("ace/theme/monokai");
   editor.getSession().setMode("ace/mode/r");
   editor.setFontSize("14px");
+
+  //This app requires OpenCPU 1.0.1 or higher!
   
   function domarkdown(e){
     var req = opencpu.r_fun_call("rmdtext", {
