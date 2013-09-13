@@ -1,2 +1,1 @@
-export(rmdtextencoded)
-importFrom(utils, URLdecode)
+export(rmdtext)
