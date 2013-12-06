@@ -4,8 +4,8 @@
 <title>OpenCPU Markdown App</title>
     
 <script src="underscore-min.js"></script>    
-<script src="jquery-1.10.1.min.js"></script>
-<script src="opencpu.js"></script>
+<script src="jquery-1.10.2.min.js"></script>
+<script src="opencpu-0.4.js"></script>
 <script src="src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
@@ -18,10 +18,10 @@ $(function(){
   //This app requires OpenCPU 1.0.1 or higher!
   
   function domarkdown(e){
-    var req = opencpu.r_fun_call("rmdtext", {
+    var req = opencpu.call("rmdtext", {
       text : editor.getSession().getValue()
     }, function(session){
-      $("iframe").attr('src', session.getLoc() + "files/output.html");     
+      $("iframe").attr('src', session.getFileURL("files/output.html"));     
     }).fail(function(text){
       alert("Error: " + req.responseText);
     });
