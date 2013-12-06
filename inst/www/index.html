@@ -21,7 +21,7 @@ $(function(){
     var req = ocpu.call("rmdtext", {
       text : editor.getSession().getValue()
     }, function(session){
-      $("iframe").attr('src', session.getFileURL("files/output.html"));     
+      $("iframe").attr('src', session.getFileURL("output.html"));     
     }).fail(function(text){
       alert("Error: " + req.responseText);
     });
