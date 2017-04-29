@@ -28,13 +28,9 @@
     this.txt = txt;
     this.output = txt.split(/\r\n|\r|\n/g);
 
-    this.getKey = function(){
-      return key;
-    };
+    this.getKey = () => key;
     
-    this.getLoc = function(){
-      return loc;
-    };
+    this.getLoc = () => loc;
 
     this.getFileURL = function(path){
       return this.getLoc() + "files/" + path;
@@ -76,9 +72,7 @@
   function Snippet(code){
     this.code = code || "NULL";
     
-    this.getCode = function(){
-      return code;
-    };
+    this.getCode = () => code;
   }
   
   //for POSTing files
@@ -96,9 +90,7 @@
       throw 'invalid new Upload(file). Argument file must be a HTML <input type="file"></input>';
     }
     
-    this.getFile = function(){
-      return file;
-    };
+    this.getFile = () => file;
   }
   
   function stringify(x){
@@ -126,7 +118,7 @@
     //validate input
     if(!fun) throw "r_fun_call called without fun";
     settings = settings || {};
-    handler = handler || function(){};
+    handler = handler || (() => {});
     
     //set global settings
     settings.url = settings.url || (r_path.href + "/" + fun);
@@ -135,7 +127,7 @@
     settings.dataType = settings.dataType || "text";
     
     //ajax call
-    var jqxhr = $.ajax(settings).done(function(){
+    var jqxhr = $.ajax(settings).done(() => {
       var loc = jqxhr.getResponseHeader('Location') || console.log("Location response header missing.");
       var key = jqxhr.getResponseHeader('X-ocpu-session') || console.log("X-ocpu-session response header missing.");
       var txt = jqxhr.responseText;
@@ -145,7 +137,7 @@
         loc = r_path.protocol + "//" + r_path.host + loc;
       }
       handler(new Session(loc, key, txt));
-    }).fail(function(){
+    }).fail(() => {
       console.log("OpenCPU error HTTP " + jqxhr.status + "\n" + jqxhr.responseText);
     });
     
@@ -165,7 +157,7 @@
   //needs to wrap arguments in quotes, etc
   function r_fun_call_urlencoded(fun, args, handler){
     var data = {};
-    $.each(args, function(key, val){
+    $.each(args, (key, val) => {
       data[key] = stringify(val);
     });
     return r_fun_ajax(fun, {
@@ -178,7 +170,7 @@
   function r_fun_call_multipart(fun, args, handler){
     testhtml5();
     var formdata = new FormData();
-    $.each(args, function(key, value) {
+    $.each(args, (key, value) => {
       formdata.append(key, stringify(value));
     });
     return r_fun_ajax(fun, {
@@ -196,7 +188,7 @@
     var hascode = false;
     
     //find argument types
-    $.each(args, function(key, value){
+    $.each(args, (key, value) => {
       if(value instanceof File || value instanceof Upload || value instanceof FileList){
         hasfiles = true;
       } else if (value instanceof Snippet || value instanceof Session){
@@ -216,10 +208,10 @@
   
   //call a function and return JSON
   function rpc(fun, args, handler){
-    return r_fun_call(fun, args, function(session){
-      session.getObject(function(data){
+    return r_fun_call(fun, args, session => {
+      session.getObject(data => {
         if(handler) handler(data);
-      }).fail(function(){
+      }).fail(() => {
         console.log("Failed to get JSON response for " + session.getLoc());
       });
     });
@@ -236,12 +228,12 @@
     myplot.spinner.show();
 
     // call the function
-    return r_fun_call(fun, args, function(tmp) {
+    return r_fun_call(fun, args, tmp => {
       myplot.setlocation(tmp.getLoc());
       
       //call success handler as well
       if(cb) cb(tmp);
-    }).always(function(){
+    }).always(() => {
       myplot.spinner.hide();      
     });
   };
@@ -250,7 +242,7 @@
     if(targetdiv.data("ocpuplot")){
       return targetdiv.data("ocpuplot");
     }
-    var ocpuplot = function(){
+    var ocpuplot = (() => {
       //local variables
       var Location;
       var pngwidth;
@@ -302,7 +294,7 @@
       }
 
       // function to update the png image
-      var onresize = debounce(function(e) {
+      var onresize = debounce(e => {
         if(pngwidth == plotdiv.width() && pngheight == plotdiv.height()){
           return;
         }
@@ -317,10 +309,10 @@
       
       //return objects      
       return {
-        setlocation: setlocation,
-        spinner : spinner
+        setlocation,
+        spinner
       };
-    }();
+    })();
     
     targetdiv.data("ocpuplot", ocpuplot);
     return ocpuplot;
@@ -331,8 +323,9 @@
     var result;
     var timeout = null;
     return function() {
-      var context = this, args = arguments;
-      var later = function() {
+      var context = this;
+      var args = arguments;
+      var later = () => {
         timeout = null;
         if (!immediate)
           result = func.apply(context, args);
@@ -384,9 +377,9 @@
       }
 
       //we use trycatch because javascript will throw an error in case CORS is refused.
-      $.get(r_path.href, function(resdata){
+      $.get(r_path.href, resdata => {
         console.log("Path updated. Available objects/functions:\n" + resdata);
-      }).fail(function(xhr, textStatus, errorThrown){
+      }).fail((xhr, textStatus, errorThrown) => {
         alert("Connection to OpenCPU failed:\n" + textStatus + "\n" + xhr.responseText + "\n" + errorThrown);
       });
     }
@@ -403,7 +396,7 @@
   
   //for innernetz exploder
   if (typeof console == "undefined") {
-    this.console = {log: function() {}};
+    this.console = {log() {}};
   }  
 
 }( jQuery ));
