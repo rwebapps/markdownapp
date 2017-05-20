@@ -27,8 +27,8 @@ $(function(){
     });
   }
 
-  //auto run after 3 seconds of no activity
-  var update = _.debounce(domarkdown, 3000);
+  //auto run after 2 seconds of no activity
+  var update = _.debounce(domarkdown, 2000);
   
   //register event
   editor.on("change", update);
