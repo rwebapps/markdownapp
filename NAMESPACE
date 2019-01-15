@@ -1,1 +1,2 @@
 export(rmdtext)
+export(rmdpdf)
