@@ -8,4 +8,5 @@ Description: OpenCPU App for markdown package
 License: Apache2
 Depends:
     knitr,
-    markdown
+    markdown,
+    ggplot2
